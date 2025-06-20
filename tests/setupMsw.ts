@@ -6,7 +6,6 @@ import { TEST_BASE_URL, testEnvs } from './utils';
 export function setupMsw(): SetupServerApi {
   const server = setupServer(
     http.all(`${testEnvs().S3_ENDPOINT}/*`, passthrough),
-    http.all(`${testEnvs().INBUCKET_URL}/*`, passthrough),
     ...setupMswHandlers(),
     ...setupMswHandlers({ baseURL: TEST_BASE_URL }),
   );
