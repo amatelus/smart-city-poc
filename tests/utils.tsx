@@ -5,7 +5,7 @@ export const TEST_BASE_URL = 'http://localhost:3000';
 
 export const TEST_SIGN_IN_NAME_PREFIX = 'test-username-prefix';
 
-const TEST_ENV_NAMES = ['S3_ENDPOINT', 'S3_BUCKET'] as const;
+const TEST_ENV_NAMES = [] as const;
 
 type TestEnvs = Record<(typeof TEST_ENV_NAMES)[number], string | undefined>;
 

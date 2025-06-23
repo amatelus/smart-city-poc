@@ -1,4 +1,3 @@
-import { CreateBucketCommand, S3Client } from '@aws-sdk/client-s3';
 import { PrismaClient } from '@prisma/client';
 import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
@@ -10,7 +9,6 @@ import { ulid } from 'ulid';
 import { afterAll, afterEach, beforeAll, beforeEach, vi } from 'vitest';
 import { setupMsw } from './setupMsw';
 import { patchFilePrototype } from './setupMswHandlers';
-import { deleteS3Bucket, resetS3Bucket } from './setupUtils';
 
 function createPrismaClient(): PrismaClient {
   return new PrismaClient({ datasources: { db: { url: process.env.DATABASE_URL } } });
@@ -20,15 +18,6 @@ vi.mock('server/service/prismaClient', async () => {
   process.env.DATABASE_URL = process.env.DATABASE_URL!.replace(/[^/]+$/, `test-${ulid()}`);
 
   return { prismaClient: createPrismaClient() };
-});
-
-vi.mock('server/utils/serverEnvs', async (importOriginal) => {
-  const actual = await importOriginal<Record<string, string>>();
-  const { S3_BUCKET } = await setupS3();
-
-  process.env.S3_BUCKET = S3_BUCKET;
-
-  return { ...actual, S3_BUCKET };
 });
 
 // https://github.com/vercel/next.js/discussions/63100#discussioncomment-8737391
@@ -77,7 +66,6 @@ beforeEach(async () => {
 }, 20000);
 
 afterEach(async () => {
-  await resetS3Bucket(createS3Client());
   await createPrismaClient().$disconnect();
 
   cleanup();
@@ -93,26 +81,4 @@ afterEach(async () => {
 
 afterAll(async () => {
   server.close();
-
-  await deleteS3Bucket(createS3Client());
 });
-
-function createS3Client(): S3Client {
-  return new S3Client({
-    forcePathStyle: true,
-    endpoint: process.env.S3_ENDPOINT,
-    region: process.env.S3_REGION,
-    credentials: {
-      accessKeyId: process.env.S3_ACCESS_KEY!,
-      secretAccessKey: process.env.S3_SECRET_KEY!,
-    },
-  });
-}
-
-async function setupS3(): Promise<{ S3_BUCKET: string }> {
-  const S3_BUCKET = `test-${ulid().toLowerCase()}`;
-
-  await createS3Client().send(new CreateBucketCommand({ Bucket: S3_BUCKET }));
-
-  return { S3_BUCKET };
-}
