@@ -1,4 +1,5 @@
 import { sha3_256 } from 'js-sha3';
+import type { DtoId } from 'src/schemas/brandedId';
 
 export interface ZKPProof {
   version: number;
@@ -55,7 +56,7 @@ const generateMockProof = (
 export const generateAgeProofZKP = async (
   birthDate: string,
   nonce: string,
-  did: string,
+  did: DtoId['did'],
 ): Promise<ZKPGenerationResult> => {
   const startTime = performance.now();
 
@@ -108,21 +109,4 @@ export const formatZKPForQR = (zkpProof: ZKPProof): string => {
   };
 
   return JSON.stringify(qrData);
-};
-
-export const validateZKPProof = (zkpProof: ZKPProof, expectedDID?: string): boolean => {
-  if (zkpProof.version !== 1) {
-    return false;
-  }
-
-  if (expectedDID && zkpProof.metadata.did !== expectedDID) {
-    return false;
-  }
-
-  const proofAge = new Date().getTime() - new Date(zkpProof.metadata.generatedAt).getTime();
-  if (proofAge > 300000) {
-    return false;
-  }
-
-  return Boolean(zkpProof.proof && zkpProof.proof.length === 64);
 };

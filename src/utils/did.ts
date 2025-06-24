@@ -2,6 +2,7 @@ import { sha3_512 } from 'js-sha3';
 import { brandedId } from 'src/schemas/brandedId';
 import { DIDDataSchema, type DIDData, type DIDDocTemplate1 } from 'src/schemas/did';
 import nacl from 'tweetnacl';
+import { safeJsonParse } from './safeJsonParse';
 
 export const generateDID = (): DIDData => {
   const keyPair = nacl.sign.keyPair();
@@ -43,9 +44,10 @@ export const loadDIDFromStorage = (): DIDData | null => {
   if (typeof window !== 'undefined') {
     const stored = localStorage.getItem('amatelus-did');
     if (stored) {
-      return DIDDataSchema.safeParse(JSON.parse(stored)).data ?? null;
+      return DIDDataSchema.safeParse(safeJsonParse(stored)).data ?? null;
     }
   }
+
   return null;
 };
 

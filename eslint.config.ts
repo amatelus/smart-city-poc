@@ -29,10 +29,10 @@ export default tseslint.config(
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/explicit-function-return-type': 'error',
       '@typescript-eslint/no-unnecessary-condition': 'error',
-      complexity: ['warn', 15],
-      'max-depth': ['warn', 4],
-      'max-nested-callbacks': ['warn', 5],
-      'max-lines': ['warn', 300],
+      complexity: ['error', 5],
+      'max-depth': ['error', 2],
+      'max-nested-callbacks': ['error', 3],
+      'max-lines': ['error', 200],
       '@typescript-eslint/no-unused-vars': [
         'error',
         {

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import type { DtoId } from 'src/schemas/brandedId';
 import { VCDtoSchema, type VCStorage } from 'src/schemas/vc';
+import { safeJsonParse } from 'src/utils/safeJsonParse';
 import { loadVCsFromStorage, removeVCFromStorage, saveVCToStorage } from 'src/utils/vc';
 import styles from './VCManager.module.css';
 
@@ -20,7 +21,7 @@ export default function VCManager(): React.ReactElement {
 
   const handleAddVC = (): void => {
     setError('');
-    const vcData = VCDtoSchema.safeParse(JSON.parse(vcJsonInput)).data;
+    const vcData = VCDtoSchema.safeParse(safeJsonParse(vcJsonInput)).data;
 
     if (!vcData) {
       setError('無効なVCフォーマットです。');
