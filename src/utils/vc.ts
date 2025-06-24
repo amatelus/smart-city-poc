@@ -8,36 +8,29 @@ import { safeJsonParse } from './safeJsonParse';
 export type { VCStorage };
 
 export const saveVCToStorage = (vc: VCStorage): void => {
-  if (typeof window !== 'undefined') {
-    const stored = localStorage.getItem('amatelus-vcs');
-    const vcs = stored
-      ? (z.array(VCStorageSchema).safeParse(safeJsonParse(stored)).data ?? [])
-      : [];
+  const stored = localStorage.getItem('amatelus-vcs');
+  const vcs = stored ? (z.array(VCStorageSchema).safeParse(safeJsonParse(stored)).data ?? []) : [];
 
-    vcs.push(vc);
+  vcs.push(vc);
 
-    localStorage.setItem('amatelus-vcs', JSON.stringify(vcs));
-  }
+  localStorage.setItem('amatelus-vcs', JSON.stringify(vcs));
 };
 
 export const loadVCsFromStorage = (): VCStorage[] => {
-  if (typeof window !== 'undefined') {
-    const stored = localStorage.getItem('amatelus-vcs');
-    if (stored) {
-      return z.array(VCStorageSchema).safeParse(safeJsonParse(stored)).data ?? [];
-    }
+  const stored = localStorage.getItem('amatelus-vcs');
+  if (stored) {
+    return z.array(VCStorageSchema).safeParse(safeJsonParse(stored)).data ?? [];
   }
+
   return [];
 };
 
 export const removeVCFromStorage = (id: DtoId['vc']): void => {
-  if (typeof window !== 'undefined') {
-    const stored = localStorage.getItem('amatelus-vcs');
-    if (stored) {
-      const vcs = z.array(VCStorageSchema).safeParse(safeJsonParse(stored)).data ?? [];
-      const filtered = vcs.filter((vc) => vc.data.id !== id);
-      localStorage.setItem('amatelus-vcs', JSON.stringify(filtered));
-    }
+  const stored = localStorage.getItem('amatelus-vcs');
+  if (stored) {
+    const vcs = z.array(VCStorageSchema).safeParse(safeJsonParse(stored)).data ?? [];
+    const filtered = vcs.filter((vc) => vc.data.id !== id);
+    localStorage.setItem('amatelus-vcs', JSON.stringify(filtered));
   }
 };
 

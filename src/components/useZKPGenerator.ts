@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { DtoId } from 'src/schemas/brandedId';
 import { loadDIDFromStorage } from 'src/utils/did';
 import { loadVCsFromStorage, type VCStorage } from 'src/utils/vc';
@@ -30,17 +30,20 @@ export const useZKPGenerator = (): {
   );
   const [error, setError] = useState<string>('');
   const [showQR, setShowQR] = useState(false);
+  const [vcs, setVCs] = useState<VCStorage[]>([]);
 
-  const vcs = loadVCsFromStorage();
   const residenceVCs = vcs.filter(
     (vc) => vc.data.type.includes('ResidentCredential') && vc.data.credentialSubject.birthDate,
   );
 
+  useEffect(() => {
+    setVCs(loadVCsFromStorage());
+  }, []);
+
   const generateZKP = async (): Promise<void> => {
     setError('');
-    setIsGenerating(true);
 
-    if (!nonce.trim()) {
+    if (!nonce) {
       setError('チャレンジ文字列（Nonce）を入力してください。');
       return;
     }
@@ -63,7 +66,9 @@ export const useZKPGenerator = (): {
       return;
     }
 
-    await generateAgeProofZKP(birthDate, nonce.trim(), didData.doc.id)
+    setIsGenerating(true);
+
+    await generateAgeProofZKP(birthDate, nonce, didData.doc.id)
       .then(setZkpResult)
       .catch((err) =>
         setError(err instanceof Error ? err.message : 'ZKP生成中にエラーが発生しました。'),

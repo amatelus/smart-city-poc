@@ -10,10 +10,7 @@ export default function DIDManager(): React.ReactElement {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const stored = loadDIDFromStorage();
-    if (stored) {
-      setDidData(stored);
-    }
+    setDidData(loadDIDFromStorage());
   }, []);
 
   function handleGenerateDID(): void {
@@ -30,9 +27,8 @@ export default function DIDManager(): React.ReactElement {
   }
 
   function handleClearDID(): void {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('amatelus-did');
-    }
+    localStorage.removeItem('amatelus-did');
+
     setDidData(null);
   }
 

@@ -35,20 +35,13 @@ export const generateDID = (): DIDData => {
 };
 
 export const saveDIDToStorage = (didData: DIDData): void => {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem('amatelus-did', JSON.stringify(didData));
-  }
+  localStorage.setItem('amatelus-did', JSON.stringify(didData));
 };
 
 export const loadDIDFromStorage = (): DIDData | null => {
-  if (typeof window !== 'undefined') {
-    const stored = localStorage.getItem('amatelus-did');
-    if (stored) {
-      return DIDDataSchema.safeParse(safeJsonParse(stored)).data ?? null;
-    }
-  }
+  const stored = localStorage.getItem('amatelus-did');
 
-  return null;
+  return DIDDataSchema.safeParse(safeJsonParse(stored)).data ?? null;
 };
 
 export const signMessage = (message: string, privateKey: string): string => {

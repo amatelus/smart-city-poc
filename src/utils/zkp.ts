@@ -76,24 +76,14 @@ export const generateAgeProofZKP = async (
     proofType: 'age_over_20',
     nonce,
     proof,
-    publicInputs: {
-      currentDate,
-      minAge: 20,
-      nonce,
-    },
-    metadata: {
-      generatedAt: new Date().toISOString(),
-      did,
-    },
+    publicInputs: { currentDate, minAge: 20, nonce },
+    metadata: { generatedAt: new Date().toISOString(), did },
   };
 
   const endTime = performance.now();
   const generationTime = endTime - startTime;
 
-  return {
-    proof: zkpProof,
-    generationTime,
-  };
+  return { proof: zkpProof, generationTime };
 };
 
 export const formatZKPForQR = (zkpProof: ZKPProof): string => {
@@ -102,10 +92,7 @@ export const formatZKPForQR = (zkpProof: ZKPProof): string => {
     type: zkpProof.proofType,
     proof: zkpProof.proof,
     inputs: zkpProof.publicInputs,
-    meta: {
-      ts: zkpProof.metadata.generatedAt,
-      did: zkpProof.metadata.did,
-    },
+    meta: { ts: zkpProof.metadata.generatedAt, did: zkpProof.metadata.did },
   };
 
   return JSON.stringify(qrData);
