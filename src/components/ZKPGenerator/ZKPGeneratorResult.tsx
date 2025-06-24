@@ -1,6 +1,7 @@
 'use client';
 
 import type { ZKPProof } from 'src/schemas/zkp';
+import { formatJPDateTimeFromISO } from 'src/utils/date-utils';
 import styles from './ZKPGenerator.module.css';
 
 interface ZKPGeneratorResultProps {
@@ -33,7 +34,7 @@ export default function ZKPGeneratorResult({
         </div>
         <div className={styles.infoItem}>
           <strong>生成日時:</strong>{' '}
-          {new Date(zkpResult.proof.baseProof.metadata.generatedAt).toLocaleString('ja-JP')}
+          {formatJPDateTimeFromISO(zkpResult.proof.baseProof.metadata.generatedAt)}
         </div>
       </div>
 
