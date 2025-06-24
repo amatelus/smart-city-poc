@@ -2,9 +2,18 @@
 
 import { useEffect, useState } from 'react';
 import type { DtoId } from 'src/schemas/brandedId';
-import { VCDtoSchema, type VCStorage } from 'src/schemas/vc';
-import { safeJsonParse } from 'src/utils/safeJsonParse';
-import { loadVCsFromStorage, removeVCFromStorage, saveVCToStorage } from 'src/utils/vc';
+import type { DIDData } from 'src/schemas/did';
+import type { VCStorage } from 'src/schemas/vc';
+import { loadAllDIDsFromStorage } from 'src/utils/did';
+import {
+  createSampleResidentVC,
+  loadVCsFromStorage,
+  removeVCFromStorage,
+  saveVCToStorage,
+} from 'src/utils/vc';
+import VCAddModal from './VCAddModal';
+import VCDetailModal from './VCDetailModal';
+import VCDIDSelector from './VCDIDSelector';
 import styles from './VCManager.module.css';
 
 export default function VCManager(): React.ReactElement {
@@ -13,32 +22,46 @@ export default function VCManager(): React.ReactElement {
   const [vcJsonInput, setVcJsonInput] = useState('');
   const [selectedVC, setSelectedVC] = useState<VCStorage | null>(null);
   const [error, setError] = useState<string>('');
+  const [availableDIDs, setAvailableDIDs] = useState<DIDData[]>([]);
+  const [selectedDID, setSelectedDID] = useState<DtoId['did'] | null>(null);
 
   useEffect(() => {
-    const stored = loadVCsFromStorage();
-    setVCs(stored);
-  }, []);
+    const allDIDs = loadAllDIDsFromStorage();
+    setAvailableDIDs(allDIDs);
 
-  const handleAddVC = (): void => {
-    setError('');
-    const vcData = VCDtoSchema.safeParse(safeJsonParse(vcJsonInput)).data;
+    if (!selectedDID && allDIDs.length > 0) {
+      setVCs([]);
+    } else if (selectedDID) {
+      const vcsForDID = loadVCsFromStorage(selectedDID);
+      setVCs(vcsForDID);
+    }
+  }, [selectedDID]);
 
-    if (!vcData) {
-      setError('無効なVCフォーマットです。');
+  useEffect(() => {
+    if (selectedDID) {
+      const vcsForDID = loadVCsFromStorage(selectedDID);
+      setVCs(vcsForDID);
+    } else {
+      setVCs([]);
+    }
+  }, [selectedDID]);
+
+  const handleAddSampleVC = (): void => {
+    if (!selectedDID) {
+      setError('DIDを選択してください。');
       return;
     }
 
-    saveVCToStorage({ title: 'サンプルVC', data: vcData });
-    const updated = loadVCsFromStorage();
+    const sampleVC = createSampleResidentVC(selectedDID);
+    saveVCToStorage({ title: 'サンプル住民票VC', data: sampleVC });
+    const updated = loadVCsFromStorage(selectedDID);
     setVCs(updated);
-    setVcJsonInput('');
-    setShowAddForm(false);
   };
 
   const handleRemoveVC = (id: DtoId['vc']): void => {
     if (confirm('このVCを削除しますか？')) {
       removeVCFromStorage(id);
-      const updated = loadVCsFromStorage();
+      const updated = selectedDID ? loadVCsFromStorage(selectedDID) : [];
       setVCs(updated);
       if (selectedVC && selectedVC.data.id === id) {
         setSelectedVC(null);
@@ -54,20 +77,42 @@ export default function VCManager(): React.ReactElement {
     <div className={styles.container}>
       <h2 className={styles.title}>VC（Verifiable Credentials）管理</h2>
 
+      <VCDIDSelector
+        availableDIDs={availableDIDs}
+        selectedDID={selectedDID}
+        onDIDSelect={setSelectedDID}
+        onError={setError}
+      />
+
       <div className={styles.section}>
         <div className={styles.vcList}>
           <div className={styles.listHeader}>
             <h3>保有VC一覧 ({vcs.length}件)</h3>
             <div className={styles.buttonGroup}>
-              <button onClick={() => setShowAddForm(true)} className={styles.button}>
+              <button
+                onClick={handleAddSampleVC}
+                disabled={!selectedDID}
+                className={`${styles.button} ${styles.sampleButton}`}
+              >
+                サンプルVC追加
+              </button>
+              <button
+                onClick={() => setShowAddForm(true)}
+                disabled={!selectedDID}
+                className={styles.button}
+              >
                 VC追加
               </button>
             </div>
           </div>
 
-          {vcs.length === 0 ? (
+          {!selectedDID ? (
             <div className={styles.emptyState}>
-              <p>VCが登録されていません</p>
+              <p>DIDを選択してVCを表示してください</p>
+            </div>
+          ) : vcs.length === 0 ? (
+            <div className={styles.emptyState}>
+              <p>選択されたDIDにVCが登録されていません</p>
             </div>
           ) : (
             <div className={styles.vcItems}>
@@ -101,89 +146,18 @@ export default function VCManager(): React.ReactElement {
       </div>
 
       {showAddForm && (
-        <div className={styles.modal}>
-          <div className={styles.modalContent}>
-            <div className={styles.modalHeader}>
-              <h3>VC追加</h3>
-              <button
-                onClick={() => {
-                  setShowAddForm(false);
-                  setVcJsonInput('');
-                  setError('');
-                }}
-                className={styles.closeButton}
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className={styles.formSection}>
-              <label>VC JSON:</label>
-              <textarea
-                value={vcJsonInput}
-                onChange={(e) => setVcJsonInput(e.target.value)}
-                placeholder="VCのJSON形式データを貼り付けてください"
-                className={styles.textarea}
-                rows={10}
-              />
-
-              {error && <div className={styles.error}>{error}</div>}
-
-              <div className={styles.buttonGroup}>
-                <button
-                  onClick={handleAddVC}
-                  className={styles.button}
-                  disabled={!vcJsonInput.trim()}
-                >
-                  追加
-                </button>
-                <button
-                  onClick={() => {
-                    setShowAddForm(false);
-                    setVcJsonInput('');
-                    setError('');
-                  }}
-                  className={`${styles.button} ${styles.cancelButton}`}
-                >
-                  キャンセル
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <VCAddModal
+          selectedDID={selectedDID}
+          vcJsonInput={vcJsonInput}
+          error={error}
+          onVcJsonInputChange={setVcJsonInput}
+          onError={setError}
+          onVCsUpdate={setVCs}
+          onClose={() => setShowAddForm(false)}
+        />
       )}
 
-      {selectedVC && (
-        <div className={styles.modal}>
-          <div className={styles.modalContent}>
-            <div className={styles.modalHeader}>
-              <h3>VC詳細: {selectedVC.title}</h3>
-              <button onClick={() => setSelectedVC(null)} className={styles.closeButton}>
-                ✕
-              </button>
-            </div>
-
-            <div className={styles.vcDetail}>
-              <div className={styles.vcInfo}>
-                <div className={styles.infoItem}>
-                  <strong>発行者:</strong> {selectedVC.data.issuer}
-                </div>
-                <div className={styles.infoItem}>
-                  <strong>発行日:</strong> {formatDate(selectedVC.data.issuanceDate)}
-                </div>
-                <div className={styles.infoItem}>
-                  <strong>対象DID:</strong> {selectedVC.data.credentialSubject.id}
-                </div>
-              </div>
-
-              <div className={styles.jsonSection}>
-                <strong>VC JSON:</strong>
-                <pre className={styles.jsonDisplay}>{JSON.stringify(selectedVC.data, null, 2)}</pre>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {selectedVC && <VCDetailModal selectedVC={selectedVC} onClose={() => setSelectedVC(null)} />}
     </div>
   );
 }

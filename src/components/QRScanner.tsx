@@ -7,29 +7,25 @@ import styles from './QRScanner.module.css';
 interface QRScannerProps {
   onScan: (result: string) => void;
   onError?: (error: string) => void;
-  isActive: boolean;
   onClose: () => void;
 }
 
 export default function QRScanner({
   onScan,
   onError,
-  isActive,
   onClose,
-}: QRScannerProps): React.ReactNode {
+}: QRScannerProps): React.ReactElement {
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
   const [isScanning, setIsScanning] = useState(false);
 
   const startScanner = useCallback(() => {
     if (scannerRef.current) return;
 
-    const config = {
-      fps: 10,
-      qrbox: { width: 250, height: 250 },
-      aspectRatio: 1.0,
-    };
-
-    scannerRef.current = new Html5QrcodeScanner('qr-reader', config, false);
+    scannerRef.current = new Html5QrcodeScanner(
+      'qr-reader',
+      { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1.0 },
+      false,
+    );
 
     scannerRef.current.render(
       (decodedText: string) => {
@@ -47,10 +43,8 @@ export default function QRScanner({
   }, [onScan, onError]);
 
   useEffect(() => {
-    if (isActive && !isScanning) {
+    if (!isScanning) {
       startScanner();
-    } else if (!isActive && isScanning) {
-      stopScanner();
     }
 
     return (): void => {
@@ -58,7 +52,7 @@ export default function QRScanner({
         stopScanner();
       }
     };
-  }, [isActive, isScanning, startScanner]);
+  }, [isScanning, startScanner]);
 
   const stopScanner = (): void => {
     if (scannerRef.current) {
@@ -67,8 +61,6 @@ export default function QRScanner({
     }
     setIsScanning(false);
   };
-
-  if (!isActive) return null;
 
   return (
     <div className={styles.scannerModal}>

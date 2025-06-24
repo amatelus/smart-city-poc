@@ -7,31 +7,49 @@ import { z } from 'zod/v4';
 import { safeJsonParse } from './safeJsonParse';
 export type { VCStorage };
 
+const STORAGE_KEY = 'amatelus-vcs-by-did';
+
 export const saveVCToStorage = (vc: VCStorage): void => {
-  const stored = localStorage.getItem('amatelus-vcs');
-  const vcs = stored ? (z.array(VCStorageSchema).safeParse(safeJsonParse(stored)).data ?? []) : [];
+  const targetDID = vc.data.credentialSubject.id;
+  const allVCsByDID = loadAllVCsByDIDFromStorage();
 
-  vcs.push(vc);
-
-  localStorage.setItem('amatelus-vcs', JSON.stringify(vcs));
-};
-
-export const loadVCsFromStorage = (): VCStorage[] => {
-  const stored = localStorage.getItem('amatelus-vcs');
-  if (stored) {
-    return z.array(VCStorageSchema).safeParse(safeJsonParse(stored)).data ?? [];
+  if (!allVCsByDID[targetDID]) {
+    allVCsByDID[targetDID] = [];
   }
 
-  return [];
+  const existingIndex = allVCsByDID[targetDID].findIndex(
+    (existingVC) => existingVC.data.id === vc.data.id,
+  );
+
+  if (existingIndex >= 0) {
+    allVCsByDID[targetDID][existingIndex] = vc;
+  } else {
+    allVCsByDID[targetDID].push(vc);
+  }
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(allVCsByDID));
+};
+
+export const loadAllVCsByDIDFromStorage = (): Record<DtoId['did'], VCStorage[] | undefined> => {
+  return (
+    z
+      .record(z.string(), z.array(VCStorageSchema))
+      .safeParse(safeJsonParse(localStorage.getItem(STORAGE_KEY))).data ?? {}
+  );
+};
+
+export const loadVCsFromStorage = (didId: DtoId['did']): VCStorage[] => {
+  return loadAllVCsByDIDFromStorage()[didId] || [];
 };
 
 export const removeVCFromStorage = (id: DtoId['vc']): void => {
-  const stored = localStorage.getItem('amatelus-vcs');
-  if (stored) {
-    const vcs = z.array(VCStorageSchema).safeParse(safeJsonParse(stored)).data ?? [];
-    const filtered = vcs.filter((vc) => vc.data.id !== id);
-    localStorage.setItem('amatelus-vcs', JSON.stringify(filtered));
+  const allVCsByDID = loadAllVCsByDIDFromStorage();
+
+  for (const [did, vcs] of Object.entries(allVCsByDID)) {
+    allVCsByDID[brandedId.did.dto.parse(did)] = vcs?.filter((vc) => vc.data.id !== id);
   }
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(allVCsByDID));
 };
 
 export const createSampleResidentVC = (holderDid: DtoId['did']): VCDto => {

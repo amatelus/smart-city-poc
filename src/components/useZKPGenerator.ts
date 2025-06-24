@@ -2,19 +2,23 @@
 
 import { useEffect, useState } from 'react';
 import type { DtoId } from 'src/schemas/brandedId';
-import { loadDIDFromStorage } from 'src/utils/did';
+import type { DIDData } from 'src/schemas/did';
+import { loadAllDIDsFromStorage } from 'src/utils/did';
 import { loadVCsFromStorage, type VCStorage } from 'src/utils/vc';
 import type { ZKPProof } from 'src/utils/zkp';
 import { generateAgeProofZKP } from 'src/utils/zkp';
 
 export const useZKPGenerator = (): {
+  selectedDID: DtoId['did'] | null;
   selectedVCId: DtoId['vc'] | null;
   nonce: string;
   isGenerating: boolean;
   zkpResult: { proof: ZKPProof; generationTime: number } | null;
   error: string;
   showQR: boolean;
+  allDIDs: DIDData[];
   residenceVCs: VCStorage[];
+  setSelectedDID: (id: DtoId['did'] | null) => void;
   setSelectedVCId: (id: DtoId['vc']) => void;
   setNonce: (value: string) => void;
   generateZKP: () => Promise<void>;
@@ -22,6 +26,7 @@ export const useZKPGenerator = (): {
   closeQR: () => void;
   resetForm: () => void;
 } => {
+  const [selectedDID, setSelectedDID] = useState<DtoId['did'] | null>(null);
   const [selectedVCId, setSelectedVCId] = useState<DtoId['vc'] | null>(null);
   const [nonce, setNonce] = useState<string>('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -30,6 +35,7 @@ export const useZKPGenerator = (): {
   );
   const [error, setError] = useState<string>('');
   const [showQR, setShowQR] = useState(false);
+  const [allDIDs, setAllDIDs] = useState<DIDData[]>([]);
   const [vcs, setVCs] = useState<VCStorage[]>([]);
 
   const residenceVCs = vcs.filter(
@@ -37,20 +43,30 @@ export const useZKPGenerator = (): {
   );
 
   useEffect(() => {
-    setVCs(loadVCsFromStorage());
+    const dids = loadAllDIDsFromStorage();
+
+    if (dids.length === 0) return;
+
+    setAllDIDs(dids);
+    setSelectedDID(dids[0].doc.id);
   }, []);
+
+  useEffect(() => {
+    setVCs(selectedDID ? loadVCsFromStorage(selectedDID) : []);
+
+    setSelectedVCId(null);
+  }, [selectedDID]);
 
   const generateZKP = async (): Promise<void> => {
     setError('');
 
-    if (!nonce) {
-      setError('チャレンジ文字列（Nonce）を入力してください。');
+    if (!selectedDID) {
+      setError('DIDを選択してください。');
       return;
     }
 
-    const didData = loadDIDFromStorage();
-    if (!didData) {
-      setError('DIDが生成されていません。');
+    if (!nonce) {
+      setError('チャレンジ文字列（Nonce）を入力してください。');
       return;
     }
 
@@ -68,7 +84,7 @@ export const useZKPGenerator = (): {
 
     setIsGenerating(true);
 
-    await generateAgeProofZKP(birthDate, nonce, didData.doc.id)
+    await generateAgeProofZKP(birthDate, nonce, selectedDID)
       .then(setZkpResult)
       .catch((err) =>
         setError(err instanceof Error ? err.message : 'ZKP生成中にエラーが発生しました。'),
@@ -86,6 +102,7 @@ export const useZKPGenerator = (): {
   };
 
   const resetForm = (): void => {
+    setSelectedDID(null);
     setSelectedVCId(null);
     setNonce('');
     setZkpResult(null);
@@ -94,13 +111,16 @@ export const useZKPGenerator = (): {
   };
 
   return {
+    selectedDID,
     selectedVCId,
     nonce,
     isGenerating,
     zkpResult,
     error,
     showQR,
+    allDIDs,
     residenceVCs,
+    setSelectedDID,
     setSelectedVCId,
     setNonce,
     generateZKP,

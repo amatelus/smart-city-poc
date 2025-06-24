@@ -1,18 +1,36 @@
 'use client';
 
 import { QRCodeSVG } from 'qrcode.react';
-import { useState } from 'react';
-import { loadDIDFromStorage } from 'src/utils/did';
+import { useEffect, useState } from 'react';
+import type { DtoId } from 'src/schemas/brandedId';
+import type { DIDData } from 'src/schemas/did';
+import { loadAllDIDsFromStorage } from 'src/utils/did';
+import { formatDIDId } from 'src/utils/formatDIDId';
 import styles from './PublicKeyQRCode.module.css';
 
 export default function PublicKeyQRCode(): React.ReactElement {
   const [showQR, setShowQR] = useState(false);
   const [qrData, setQrData] = useState<string>('');
+  const [availableDIDs, setAvailableDIDs] = useState<DIDData[]>([]);
+  const [selectedDID, setSelectedDID] = useState<DtoId['did'] | null>(null);
+  const [error, setError] = useState<string>('');
+
+  useEffect(() => {
+    const allDIDs = loadAllDIDsFromStorage();
+    setAvailableDIDs(allDIDs);
+  }, []);
 
   const generatePublicKeyQR = (): void => {
-    const didData = loadDIDFromStorage();
+    setError('');
+
+    if (!selectedDID) {
+      setError('DIDを選択してください。');
+      return;
+    }
+
+    const didData = availableDIDs.find((did) => did.doc.id === selectedDID);
     if (!didData) {
-      alert('DIDが生成されていません。まずDIDを生成してください。');
+      setError('選択されたDIDが見つかりません。');
       return;
     }
 
@@ -40,7 +58,36 @@ export default function PublicKeyQRCode(): React.ReactElement {
           このQRコードには、バージョン番号と公開鍵が含まれます。
         </p>
 
-        <button onClick={generatePublicKeyQR} className={styles.button}>
+        <div className={styles.didSelection}>
+          <label htmlFor="did-select" className={styles.selectLabel}>
+            DIDを選択:
+          </label>
+          <select
+            id="did-select"
+            value={selectedDID || ''}
+            onChange={(e) => {
+              setSelectedDID((e.target.value as DtoId['did']) || null);
+              setError('');
+            }}
+            className={styles.didSelect}
+          >
+            <option value="">-- DIDを選択してください --</option>
+            {availableDIDs.map((did) => (
+              <option key={did.doc.id} value={did.doc.id}>
+                {formatDIDId(did.doc.id)}
+              </option>
+            ))}
+          </select>
+          {availableDIDs.length === 0 && (
+            <p className={styles.noDIDs}>
+              利用可能なDIDがありません。DID管理画面でDIDを作成してください。
+            </p>
+          )}
+        </div>
+
+        {error && <div className={styles.error}>{error}</div>}
+
+        <button onClick={generatePublicKeyQR} className={styles.button} disabled={!selectedDID}>
           本人確認用QRコードを表示
         </button>
       </div>
@@ -56,7 +103,7 @@ export default function PublicKeyQRCode(): React.ReactElement {
             </div>
 
             <div className={styles.qrCodeWrapper}>
-              <QRCodeSVG value={qrData} size={300} level="M" includeMargin={true} />
+              <QRCodeSVG value={qrData} size={300} level="M" />
             </div>
 
             <div className={styles.qrInfo}>

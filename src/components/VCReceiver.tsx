@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { VCMetadata } from 'src/schemas/vc';
+import { condition } from 'src/utils/condition';
 import QRScanner from './QRScanner';
 import VCErrorDisplay from './VCErrorDisplay';
 import styles from './VCReceiver.module.css';
@@ -83,12 +84,15 @@ export default function VCReceiver(): React.ReactElement {
         {error && <VCErrorDisplay error={error} onReset={closeScannerAndReset} />}
       </div>
 
-      <QRScanner
-        isActive={step === 'scanning-meta' || step === 'scanning-parts'}
-        onScan={step === 'scanning-meta' ? handleMetadataScan : handlePartScan}
-        onError={handleScanError}
-        onClose={closeScannerAndReset}
-      />
+      {condition(step)
+        .case(['scanning-meta', 'scanning-parts'], (s) => (
+          <QRScanner
+            onScan={s === 'scanning-meta' ? handleMetadataScan : handlePartScan}
+            onError={handleScanError}
+            onClose={closeScannerAndReset}
+          />
+        ))
+        .else(() => null)}
     </div>
   );
 }

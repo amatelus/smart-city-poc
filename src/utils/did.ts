@@ -2,7 +2,10 @@ import { sha3_512 } from 'js-sha3';
 import { brandedId } from 'src/schemas/brandedId';
 import { DIDDataSchema, type DIDData, type DIDDocTemplate1 } from 'src/schemas/did';
 import nacl from 'tweetnacl';
+import { z } from 'zod/v4';
 import { safeJsonParse } from './safeJsonParse';
+
+const STORAGE_KEY = 'amatelus-dids';
 
 export const generateDID = (): DIDData => {
   const keyPair = nacl.sign.keyPair();
@@ -35,13 +38,23 @@ export const generateDID = (): DIDData => {
 };
 
 export const saveDIDToStorage = (didData: DIDData): void => {
-  localStorage.setItem('amatelus-did', JSON.stringify(didData));
+  const storedDIDs = loadAllDIDsFromStorage();
+  const updatedDIDs = [...storedDIDs.filter((d) => d.doc.id !== didData.doc.id), didData];
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedDIDs));
 };
 
-export const loadDIDFromStorage = (): DIDData | null => {
-  const stored = localStorage.getItem('amatelus-did');
+export const loadAllDIDsFromStorage = (): DIDData[] => {
+  return (
+    z.array(DIDDataSchema).safeParse(safeJsonParse(localStorage.getItem(STORAGE_KEY))).data ?? []
+  );
+};
 
-  return DIDDataSchema.safeParse(safeJsonParse(stored)).data ?? null;
+export const removeDIDFromStorage = (didId: string): void => {
+  const storedDIDs = loadAllDIDsFromStorage();
+  const filteredDIDs = storedDIDs.filter((did) => did.doc.id !== didId);
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(filteredDIDs));
 };
 
 export const signMessage = (message: string, privateKey: string): string => {

@@ -151,3 +151,45 @@
   background: #fff3cd;
   border-left: 4px solid #ffc107;
 }
+
+.didSelection {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.selectLabel {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #333;
+}
+
+.didSelect {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.didSelect:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgb(0 123 255 / 25%);
+}
+
+.noDIDs {
+  margin-top: 8px;
+  font-style: italic;
+  color: #666;
+}
+
+.error {
+  padding: 8px 12px;
+  margin: 10px 0;
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+}

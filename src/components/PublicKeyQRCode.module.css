@@ -125,3 +125,35 @@
   word-break: break-all;
   white-space: pre-wrap;
 }
+
+.didSelection {
+  margin-bottom: 20px;
+}
+
+.selectLabel {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.didSelect {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.noDIDs {
+  margin-top: 8px;
+  color: #666;
+}
+
+.error {
+  padding: 8px 12px;
+  margin: 10px 0;
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+}

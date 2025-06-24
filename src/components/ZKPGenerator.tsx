@@ -8,13 +8,16 @@ import ZKPQRModal from './ZKPQRModal';
 
 export default function ZKPGenerator(): React.ReactElement {
   const {
+    selectedDID,
     selectedVCId,
     nonce,
     isGenerating,
     zkpResult,
     error,
     showQR,
+    allDIDs,
     residenceVCs,
+    setSelectedDID,
     setSelectedVCId,
     setNonce,
     generateZKP,
@@ -35,11 +38,14 @@ export default function ZKPGenerator(): React.ReactElement {
 
         {!zkpResult ? (
           <ZKPGeneratorForm
+            selectedDID={selectedDID}
             selectedVCId={selectedVCId}
             nonce={nonce}
             isGenerating={isGenerating}
             error={error}
+            allDIDs={allDIDs}
             residenceVCs={residenceVCs}
+            onDIDSelect={setSelectedDID}
             onVCSelect={setSelectedVCId}
             onNonceChange={setNonce}
             onGenerate={generateZKP}

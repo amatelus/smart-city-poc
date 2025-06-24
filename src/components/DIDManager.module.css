@@ -101,3 +101,143 @@
 .dangerButton:hover {
   background: #c82333;
 }
+
+.section {
+  padding: 20px;
+  margin-bottom: 20px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.sectionHeader h3 {
+  margin: 0;
+  color: #333;
+}
+
+.emptyState {
+  padding: 40px 20px;
+  color: #666;
+  text-align: center;
+}
+
+.didList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.didItem {
+  padding: 15px;
+  cursor: pointer;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.didItem:hover {
+  background: #e9ecef;
+  border-color: #dee2e6;
+}
+
+.didItemHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.didId {
+  font-family: monospace;
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+}
+
+.didItemActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.removeButton {
+  padding: 6px 12px;
+  font-size: 14px;
+  color: white;
+  cursor: pointer;
+  background: #dc3545;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.removeButton:disabled {
+  cursor: not-allowed;
+  background: #ccc;
+}
+
+.removeButton:hover:not(:disabled) {
+  background: #c82333;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(0 0 0 / 80%);
+}
+
+.modalContent {
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  padding: 30px;
+  overflow-y: auto;
+  background: white;
+  border-radius: 12px;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.modalHeader h3 {
+  margin: 0;
+  color: #333;
+}
+
+.closeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  font-size: 24px;
+  color: #666;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.closeButton:hover {
+  color: #333;
+}
+
+.didDetail {
+  text-align: left;
+}
