@@ -1,0 +1,103 @@
+.container {
+  max-width: 800px;
+  padding: 20px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.title {
+  margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.noDidSection {
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.didSection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.didInfo {
+  padding: 20px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.didInfo h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.field {
+  margin-bottom: 15px;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+.value {
+  padding: 8px;
+  font-family: monospace;
+  font-size: 14px;
+  word-break: break-all;
+  background: #f5f5f5;
+  border-radius: 4px;
+}
+
+.jsonValue {
+  max-height: 300px;
+  padding: 12px;
+  overflow: auto;
+  font-size: 12px;
+  white-space: pre-wrap;
+  background: #f5f5f5;
+  border-radius: 4px;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.button {
+  padding: 12px 24px;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+  background: #007bff;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.button:hover {
+  background: #0056b3;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  background: #ccc;
+}
+
+.dangerButton {
+  background: #dc3545;
+}
+
+.dangerButton:hover {
+  background: #c82333;
+}

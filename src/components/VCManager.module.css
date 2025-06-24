@@ -1,0 +1,256 @@
+.container {
+  max-width: 800px;
+  padding: 20px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.title {
+  margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.section {
+  padding: 20px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.vcList {
+  width: 100%;
+}
+
+.listHeader {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.listHeader h3 {
+  margin: 0;
+  color: #333;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.button {
+  padding: 8px 16px;
+  font-size: 14px;
+  color: white;
+  cursor: pointer;
+  background: #007bff;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.button:hover {
+  background: #0056b3;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  background: #ccc;
+}
+
+.cancelButton {
+  background: #6c757d;
+}
+
+.cancelButton:hover {
+  background: #545b62;
+}
+
+.emptyState {
+  padding: 40px 20px;
+  color: #666;
+  text-align: center;
+}
+
+.vcItems {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.vcItem {
+  padding: 15px;
+  cursor: pointer;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.vcItem:hover {
+  border-color: #007bff;
+  box-shadow: 0 2px 4px rgb(0 123 255 / 10%);
+}
+
+.vcItemHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.vcItemHeader h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.removeButton {
+  padding: 4px 8px;
+  font-size: 12px;
+  color: white;
+  cursor: pointer;
+  background: #dc3545;
+  border: none;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+}
+
+.removeButton:hover {
+  background: #c82333;
+}
+
+.vcItemInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  color: #666;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(0 0 0 / 80%);
+}
+
+.modalContent {
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: white;
+  border-radius: 12px;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.modalHeader h3 {
+  margin: 0;
+  color: #333;
+}
+
+.closeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  font-size: 24px;
+  color: #666;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.closeButton:hover {
+  color: #333;
+}
+
+.formSection {
+  padding: 20px;
+}
+
+.formSection label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #333;
+}
+
+.textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  font-family: monospace;
+  font-size: 14px;
+  resize: vertical;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.error {
+  padding: 10px;
+  margin-bottom: 15px;
+  color: #dc3545;
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+}
+
+.vcDetail {
+  padding: 20px;
+}
+
+.vcInfo {
+  margin-bottom: 20px;
+}
+
+.infoItem {
+  padding: 8px;
+  margin-bottom: 10px;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.infoItem strong {
+  color: #333;
+}
+
+.jsonSection {
+  margin-top: 20px;
+}
+
+.jsonSection strong {
+  display: block;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.jsonDisplay {
+  max-height: 400px;
+  padding: 15px;
+  overflow: auto;
+  font-size: 12px;
+  white-space: pre-wrap;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}

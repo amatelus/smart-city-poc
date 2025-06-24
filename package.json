@@ -5,7 +5,7 @@
   "scripts": {
     "predev": "run-s generate migrate:deploy",
     "dev": "run-p dev:*",
-    "dev:next": "next dev -p 3300",
+    "dev:next": "next dev -p 3333",
     "dev:frourio": "frourio-next --watch",
     "dev:hcm": "hcm 'src/**/*.module.css' -w",
     "dev:prisma": "prisma generate --watch",
@@ -35,13 +35,20 @@
     "seed": "node -r esbuild-register --enable-source-maps prisma/seed.ts"
   },
   "dependencies": {
+    "@noble/ed25519": "^2.3.0",
     "@prisma/client": "^6.8.2",
+    "@types/qrcode.react": "^1.0.5",
     "dotenv": "^16.5.0",
+    "html5-qrcode": "^2.3.8",
+    "js-sha3": "^0.9.3",
     "next": "^15.1.8",
     "prisma": "^6.8.2",
+    "qrcode.react": "^4.2.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "snarkjs": "^0.7.5",
     "swr": "^2.3.3",
+    "tweetnacl": "^1.0.3",
     "ulid": "^3.0.0",
     "zod": "^3.25.28"
   },

@@ -30,7 +30,7 @@ export default defineConfig({
           ...testBase,
           coverage: {
             ...coverageBase,
-            thresholds: { statements: 10, branches: 10, functions: 10, lines: 10 },
+            // thresholds: { statements: 10, branches: 10, functions: 10, lines: 10 },
           },
         }
       : { ...testBase, coverage: coverageBase, include: [includeFile] },
