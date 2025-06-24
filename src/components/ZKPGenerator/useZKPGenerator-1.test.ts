@@ -1,4 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
+import type { DtoId } from 'src/schemas/brandedId';
 import { brandedId } from 'src/schemas/brandedId';
 import { generateDID, saveDIDToStorage } from 'src/utils/did';
 import { createSampleResidentVC, saveVCToStorage } from 'src/utils/vc';
@@ -19,7 +20,7 @@ it('デフォルト値で初期化される', () => {
 
   expect(result.current.selectedDID).toBe(testHolderDid.doc.id);
   expect(result.current.selectedVCId).toBeNull();
-  expect(result.current.nonce).toBe('');
+  expect(result.current.challenge).toBe('');
   expect(result.current.isGenerating).toBe(false);
   expect(result.current.zkpResult).toBeNull();
   expect(result.current.error).toBe('');
@@ -45,14 +46,14 @@ it('selectedDIDとselectedVCIdが更新される', () => {
   expect(result.current.selectedVCId).toBe(sampleVC.id);
 });
 
-it('nonceが更新される', () => {
+it('challengeが更新される', () => {
   const { result } = renderHook(() => useZKPGenerator());
 
   act(() => {
-    result.current.setNonce('test-nonce');
+    result.current.setChallenge('test-challenge');
   });
 
-  expect(result.current.nonce).toBe('test-nonce');
+  expect(result.current.challenge).toBe('test-challenge');
 });
 
 it('QRコードを表示して閉じることができる', () => {
@@ -77,7 +78,7 @@ it('フォームがリセットされる', () => {
   act(() => {
     result.current.setSelectedDID(testHolderDid.doc.id);
     result.current.setSelectedVCId(sampleVC.id);
-    result.current.setNonce('test-nonce');
+    result.current.setChallenge('test-challenge');
     result.current.showQRCode();
   });
 
@@ -87,26 +88,10 @@ it('フォームがリセットされる', () => {
 
   expect(result.current.selectedDID).toBeNull();
   expect(result.current.selectedVCId).toBeNull();
-  expect(result.current.nonce).toBe('');
+  expect(result.current.challenge).toBe('');
   expect(result.current.zkpResult).toBeNull();
   expect(result.current.error).toBe('');
   expect(result.current.showQR).toBe(false);
-});
-
-it('nonceが空の場合にエラーが表示される', async () => {
-  const { result } = renderHook(() => useZKPGenerator());
-
-  act(() => {
-    result.current.setSelectedDID(testHolderDid.doc.id);
-    result.current.setSelectedVCId(sampleVC.id);
-  });
-
-  await act(async () => {
-    await result.current.generateZKP();
-  });
-
-  expect(result.current.error).toBe('チャレンジ文字列（Nonce）を入力してください。');
-  expect(result.current.isGenerating).toBe(false);
 });
 
 it('DIDが選択されていない場合にエラーが表示される', async () => {
@@ -114,7 +99,7 @@ it('DIDが選択されていない場合にエラーが表示される', async (
 
   act(() => {
     result.current.setSelectedVCId(sampleVC.id);
-    result.current.setNonce('test-nonce');
+    result.current.setChallenge('test-challenge');
     result.current.setSelectedDID(null);
   });
 
@@ -133,7 +118,8 @@ it('選択されたVCが見つからない場合にエラーが表示される',
   act(() => {
     result.current.setSelectedDID(testHolderDid.doc.id);
     result.current.setSelectedVCId(nonExistentVCId);
-    result.current.setNonce('test-nonce');
+    result.current.setChallenge('test-challenge');
+    result.current.setVerifierDID('did:amatelus:test-verifier' as DtoId['did']);
   });
 
   await act(async () => {
@@ -154,7 +140,8 @@ it('ZKPが正常に生成される', async () => {
   act(() => {
     const availableVC = result.current.residenceVCs[0];
     result.current.setSelectedVCId(availableVC.data.id);
-    result.current.setNonce('test-nonce');
+    result.current.setChallenge('test-challenge');
+    result.current.setVerifierDID('did:amatelus:test-verifier' as DtoId['did']);
   });
 
   await act(async () => {
@@ -162,11 +149,11 @@ it('ZKPが正常に生成される', async () => {
   });
 
   expect(result.current.zkpResult).not.toBeNull();
-  expect(result.current.zkpResult!.proof.version).toBe(1);
-  expect(result.current.zkpResult!.proof.proofType).toBe('age_over_20');
-  expect(result.current.zkpResult!.proof.nonce).toBe('test-nonce');
-  expect(result.current.zkpResult!.proof.publicInputs.minAge).toBe(20);
-  expect(result.current.zkpResult!.proof.metadata.did).toBe(testHolderDid.doc.id);
+  expect(result.current.zkpResult!.proof.baseProof.version).toBe(1);
+  expect(result.current.zkpResult!.proof.baseProof.proofType).toBe('age_over_20');
+  expect(result.current.zkpResult!.proof.challenge).toBe('test-challenge');
+  expect(result.current.zkpResult!.proof.baseProof.publicInputs.ageThreshold).toBe(20);
+  expect(result.current.zkpResult!.proof.baseProof.metadata.proverDID).toBe(testHolderDid.doc.id);
   expect(result.current.error).toBe('');
   expect(result.current.isGenerating).toBe(false);
 });

@@ -1,4 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
+import type { DtoId } from 'src/schemas/brandedId';
 import { generateDID, saveDIDToStorage } from 'src/utils/did';
 import { createSampleResidentVC, saveVCToStorage } from 'src/utils/vc';
 import { beforeEach, expect, it } from 'vitest';
@@ -45,14 +46,15 @@ it('未成年のZKP生成エラーが処理される', async () => {
   act(() => {
     const availableVC = result.current.residenceVCs.find((vc) => vc.data.id === modifiedVC.id)!;
     result.current.setSelectedVCId(availableVC.data.id);
-    result.current.setNonce('test-nonce');
+    result.current.setChallenge('test-challenge');
+    result.current.setVerifierDID('did:amatelus:test-verifier' as DtoId['did']);
   });
 
   await act(async () => {
     await result.current.generateZKP();
   });
 
-  expect(result.current.error).toBe('年齢が20歳未満のため、証明を生成できません。');
+  expect(result.current.error).toBe('年齢が20歳未満のため、ZKP証明を生成できません。');
   expect(result.current.zkpResult).toBeNull();
   expect(result.current.isGenerating).toBe(false);
 });

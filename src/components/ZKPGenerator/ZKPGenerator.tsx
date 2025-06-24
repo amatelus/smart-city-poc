@@ -10,7 +10,7 @@ export default function ZKPGenerator(): React.ReactElement {
   const {
     selectedDID,
     selectedVCId,
-    nonce,
+    challenge,
     isGenerating,
     zkpResult,
     error,
@@ -19,7 +19,7 @@ export default function ZKPGenerator(): React.ReactElement {
     residenceVCs,
     setSelectedDID,
     setSelectedVCId,
-    setNonce,
+    setChallenge,
     generateZKP,
     showQRCode,
     closeQR,
@@ -40,14 +40,14 @@ export default function ZKPGenerator(): React.ReactElement {
           <ZKPGeneratorForm
             selectedDID={selectedDID}
             selectedVCId={selectedVCId}
-            nonce={nonce}
+            challenge={challenge}
             isGenerating={isGenerating}
             error={error}
             allDIDs={allDIDs}
             residenceVCs={residenceVCs}
             onDIDSelect={setSelectedDID}
             onVCSelect={setSelectedVCId}
-            onNonceChange={setNonce}
+            onChallengeChange={setChallenge}
             onGenerate={generateZKP}
           />
         ) : (

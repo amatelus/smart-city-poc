@@ -26,11 +26,14 @@ export default function ZKPGeneratorResult({
           <strong>証明タイプ:</strong> 20歳以上であることの証明
         </div>
         <div className={styles.infoItem}>
-          <strong>Nonce:</strong> {zkpResult.proof.nonce}
+          <strong>Challenge:</strong> {zkpResult.proof.challenge}
+        </div>
+        <div className={styles.infoItem}>
+          <strong>Nullifier Hash:</strong> {zkpResult.proof.nullifierHash.slice(0, 16)}...
         </div>
         <div className={styles.infoItem}>
           <strong>生成日時:</strong>{' '}
-          {new Date(zkpResult.proof.metadata.generatedAt).toLocaleString('ja-JP')}
+          {new Date(zkpResult.proof.baseProof.metadata.generatedAt).toLocaleString('ja-JP')}
         </div>
       </div>
 

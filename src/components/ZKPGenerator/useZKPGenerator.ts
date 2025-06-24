@@ -6,12 +6,13 @@ import type { DIDData } from 'src/schemas/did';
 import type { ZKPProof } from 'src/schemas/zkp';
 import { loadAllDIDsFromStorage } from 'src/utils/did';
 import { loadVCsFromStorage, type VCStorage } from 'src/utils/vc';
-import { generateAgeProofZKP } from 'src/utils/zkp';
+import { combineZKPWithChallenge, generateZKPBaseProof } from 'src/utils/zkp';
 
 export const useZKPGenerator = (): {
   selectedDID: DtoId['did'] | null;
   selectedVCId: DtoId['vc'] | null;
-  nonce: string;
+  challenge: string;
+  verifierDID: DtoId['did'] | null;
   isGenerating: boolean;
   zkpResult: { proof: ZKPProof; generationTime: number } | null;
   error: string;
@@ -20,7 +21,8 @@ export const useZKPGenerator = (): {
   residenceVCs: VCStorage[];
   setSelectedDID: (id: DtoId['did'] | null) => void;
   setSelectedVCId: (id: DtoId['vc']) => void;
-  setNonce: (value: string) => void;
+  setChallenge: (value: string) => void;
+  setVerifierDID: (value: DtoId['did']) => void;
   generateZKP: () => Promise<void>;
   showQRCode: () => void;
   closeQR: () => void;
@@ -28,7 +30,8 @@ export const useZKPGenerator = (): {
 } => {
   const [selectedDID, setSelectedDID] = useState<DtoId['did'] | null>(null);
   const [selectedVCId, setSelectedVCId] = useState<DtoId['vc'] | null>(null);
-  const [nonce, setNonce] = useState<string>('');
+  const [challenge, setChallenge] = useState<string>('');
+  const [verifierDID, setVerifierDID] = useState<DtoId['did'] | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [zkpResult, setZkpResult] = useState<{ proof: ZKPProof; generationTime: number } | null>(
     null,
@@ -65,8 +68,8 @@ export const useZKPGenerator = (): {
       return;
     }
 
-    if (!nonce) {
-      setError('チャレンジ文字列（Nonce）を入力してください。');
+    if (!verifierDID) {
+      setError('検証者のDIDを入力してください。');
       return;
     }
 
@@ -84,8 +87,14 @@ export const useZKPGenerator = (): {
 
     setIsGenerating(true);
 
-    await generateAgeProofZKP(birthDate, nonce, selectedDID)
-      .then(setZkpResult)
+    // Phase 1: 事前生成ZKPを作成
+    await generateZKPBaseProof(birthDate, selectedDID)
+      .then((baseResult) => {
+        // Phase 2: challengeと組み合わせて完全なZKPを作成
+        const combinedProof = combineZKPWithChallenge(baseResult.proof, challenge, verifierDID);
+
+        setZkpResult({ proof: combinedProof, generationTime: baseResult.generationTime });
+      })
       .catch((err) =>
         setError(err instanceof Error ? err.message : 'ZKP生成中にエラーが発生しました。'),
       );
@@ -104,7 +113,8 @@ export const useZKPGenerator = (): {
   const resetForm = (): void => {
     setSelectedDID(null);
     setSelectedVCId(null);
-    setNonce('');
+    setChallenge('');
+    setVerifierDID(null);
     setZkpResult(null);
     setError('');
     setShowQR(false);
@@ -113,7 +123,8 @@ export const useZKPGenerator = (): {
   return {
     selectedDID,
     selectedVCId,
-    nonce,
+    challenge,
+    verifierDID,
     isGenerating,
     zkpResult,
     error,
@@ -122,7 +133,8 @@ export const useZKPGenerator = (): {
     residenceVCs,
     setSelectedDID,
     setSelectedVCId,
-    setNonce,
+    setChallenge,
+    setVerifierDID,
     generateZKP,
     showQRCode,
     closeQR,

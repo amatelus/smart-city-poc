@@ -47,6 +47,6 @@ export const VCMetadataSchema = z
 
 export type VCMetadata = z.infer<typeof VCMetadataSchema>;
 
-export const VCPartSchema = z.tuple([z.number().int().positive(), z.string()]);
+export const VCPartSchema = z.tuple([z.number().int().nonnegative(), z.string()]);
 
 export type VCPart = z.infer<typeof VCPartSchema>;

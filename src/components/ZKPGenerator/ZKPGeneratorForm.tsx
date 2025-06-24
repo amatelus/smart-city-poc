@@ -10,14 +10,14 @@ import styles from './ZKPGenerator.module.css';
 interface ZKPGeneratorFormProps {
   selectedDID: DtoId['did'] | null;
   selectedVCId: DtoId['vc'] | null;
-  nonce: string;
+  challenge: string;
   isGenerating: boolean;
   error: string;
   allDIDs: DIDData[];
   residenceVCs: VCStorage[];
   onDIDSelect: (didId: DtoId['did'] | null) => void;
   onVCSelect: (vcId: DtoId['vc']) => void;
-  onNonceChange: (nonce: string) => void;
+  onChallengeChange: (challenge: string) => void;
   onGenerate: () => void;
 }
 
@@ -78,21 +78,21 @@ function VCSelector({
   );
 }
 
-function NonceInput({
-  nonce,
-  onNonceChange,
+function ChallengeInput({
+  challenge,
+  onChallengeChange,
 }: {
-  nonce: string;
-  onNonceChange: (nonce: string) => void;
+  challenge: string;
+  onChallengeChange: (challenge: string) => void;
 }): React.ReactElement {
   return (
     <div className={styles.field}>
-      <label htmlFor="nonce-input">チャレンジ文字列（Nonce）:</label>
+      <label htmlFor="challenge-input">チャレンジ文字列:</label>
       <input
         type="text"
-        id="nonce-input"
-        value={nonce}
-        onChange={(e) => onNonceChange(e.target.value)}
+        id="challenge-input"
+        value={challenge}
+        onChange={(e) => onChallengeChange(e.target.value)}
         placeholder="検証者から提供されるチャレンジ文字列"
         className={styles.input}
       />
@@ -122,14 +122,14 @@ function GenerateButton({
 export default function ZKPGeneratorForm({
   selectedDID,
   selectedVCId,
-  nonce,
+  challenge,
   isGenerating,
   error,
   allDIDs,
   residenceVCs,
   onDIDSelect,
   onVCSelect,
-  onNonceChange,
+  onChallengeChange,
   onGenerate,
 }: ZKPGeneratorFormProps): React.ReactElement {
   return allDIDs.length === 0 ? (
@@ -156,7 +156,7 @@ export default function ZKPGeneratorForm({
             onVCSelect={onVCSelect}
           />
 
-          <NonceInput nonce={nonce} onNonceChange={onNonceChange} />
+          <ChallengeInput challenge={challenge} onChallengeChange={onChallengeChange} />
 
           {error && <div className={styles.error}>{error}</div>}
 
