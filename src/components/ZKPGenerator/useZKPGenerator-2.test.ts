@@ -13,14 +13,14 @@ beforeEach(() => {
   saveVCToStorage({ title: 'Test VC', data: sampleVC });
 });
 
-it('should filter residenceVCs correctly', () => {
+it('residenceVCが正しくフィルタリングされる', () => {
   const { result } = renderHook(() => useZKPGenerator());
 
   expect(result.current.residenceVCs).toHaveLength(1);
   expect(result.current.residenceVCs[0].title).toBe('Test VC');
 });
 
-it('should handle ZKP generation error for underage', async () => {
+it('未成年のZKP生成エラーが処理される', async () => {
   const today = new Date();
   const underageBirthDate = new Date(today.getFullYear() - 19, today.getMonth(), today.getDate());
   const underageVC = createSampleResidentVC(testHolderDid.doc.id);

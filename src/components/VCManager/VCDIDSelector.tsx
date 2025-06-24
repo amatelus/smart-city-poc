@@ -6,14 +6,14 @@ import { formatDIDId } from 'src/utils/formatDIDId';
 import styles from './VCManager.module.css';
 
 interface VCDIDSelectorProps {
-  availableDIDs: DIDData[];
+  allDIDs: DIDData[];
   selectedDID: DtoId['did'] | null;
   onDIDSelect: (didId: DtoId['did'] | null) => void;
   onError: (error: string) => void;
 }
 
 export default function VCDIDSelector({
-  availableDIDs,
+  allDIDs,
   selectedDID,
   onDIDSelect,
   onError,
@@ -33,18 +33,18 @@ export default function VCDIDSelector({
           }}
           className={styles.didSelect}
         >
-          {availableDIDs.map((did) => (
+          {allDIDs.map((did) => (
             <option key={did.doc.id} value={did.doc.id}>
               {formatDIDId(did.doc.id)}
             </option>
           ))}
         </select>
-        {availableDIDs.length === 0 && (
+        {allDIDs.length === 0 && (
           <p className={styles.noDIDs}>
             利用可能なDIDがありません。DID管理画面でDIDを作成してください。
           </p>
         )}
-        {!selectedDID && availableDIDs.length > 0 && (
+        {!selectedDID && allDIDs.length > 0 && (
           <p className={styles.selectPrompt}>VCを管理するDIDを選択してください。</p>
         )}
       </div>

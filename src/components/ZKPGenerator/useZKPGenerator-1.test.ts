@@ -14,7 +14,7 @@ beforeEach(() => {
   saveVCToStorage({ title: 'Test VC', data: sampleVC });
 });
 
-it('should initialize with default values', () => {
+it('デフォルト値で初期化される', () => {
   const { result } = renderHook(() => useZKPGenerator());
 
   expect(result.current.selectedDID).toBe(testHolderDid.doc.id);
@@ -28,7 +28,7 @@ it('should initialize with default values', () => {
   expect(result.current.residenceVCs).toHaveLength(1);
 });
 
-it('should update selectedDID and selectedVCId', () => {
+it('selectedDIDとselectedVCIdが更新される', () => {
   const { result } = renderHook(() => useZKPGenerator());
 
   act(() => {
@@ -45,7 +45,7 @@ it('should update selectedDID and selectedVCId', () => {
   expect(result.current.selectedVCId).toBe(sampleVC.id);
 });
 
-it('should update nonce', () => {
+it('nonceが更新される', () => {
   const { result } = renderHook(() => useZKPGenerator());
 
   act(() => {
@@ -55,7 +55,7 @@ it('should update nonce', () => {
   expect(result.current.nonce).toBe('test-nonce');
 });
 
-it('should show and close QR code', () => {
+it('QRコードを表示して閉じることができる', () => {
   const { result } = renderHook(() => useZKPGenerator());
 
   act(() => {
@@ -71,7 +71,7 @@ it('should show and close QR code', () => {
   expect(result.current.showQR).toBe(false);
 });
 
-it('should reset form', () => {
+it('フォームがリセットされる', () => {
   const { result } = renderHook(() => useZKPGenerator());
 
   act(() => {
@@ -93,7 +93,7 @@ it('should reset form', () => {
   expect(result.current.showQR).toBe(false);
 });
 
-it('should show error when nonce is empty', async () => {
+it('nonceが空の場合にエラーが表示される', async () => {
   const { result } = renderHook(() => useZKPGenerator());
 
   act(() => {
@@ -109,7 +109,7 @@ it('should show error when nonce is empty', async () => {
   expect(result.current.isGenerating).toBe(false);
 });
 
-it('should show error when DID is not selected', async () => {
+it('DIDが選択されていない場合にエラーが表示される', async () => {
   const { result } = renderHook(() => useZKPGenerator());
 
   act(() => {
@@ -126,7 +126,7 @@ it('should show error when DID is not selected', async () => {
   expect(result.current.isGenerating).toBe(false);
 });
 
-it('should show error when selected VC is not found', async () => {
+it('選択されたVCが見つからない場合にエラーが表示される', async () => {
   const { result } = renderHook(() => useZKPGenerator());
   const nonExistentVCId = brandedId.vc.dto.parse('urn:uuid:non-existent');
 
@@ -144,7 +144,7 @@ it('should show error when selected VC is not found', async () => {
   expect(result.current.isGenerating).toBe(false);
 });
 
-it('should generate ZKP successfully', async () => {
+it('ZKPが正常に生成される', async () => {
   const { result } = renderHook(() => useZKPGenerator());
 
   act(() => {

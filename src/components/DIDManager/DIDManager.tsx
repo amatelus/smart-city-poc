@@ -18,21 +18,21 @@ export default function DIDManager(): React.ReactElement {
   const handleGenerateDID = useCallback(() => {
     const newDID = generateDID();
     saveDIDToStorage(newDID);
-
-    const updatedDIDs = [...allDIDs, newDID];
-    setAllDIDs(updatedDIDs);
+    setAllDIDs((prev) => [...prev, newDID]);
 
     return newDID;
-  }, [allDIDs]);
+  }, []);
 
   useEffect(() => {
     const dids = loadAllDIDsFromStorage();
     setAllDIDs(dids);
 
     if (dids.length === 0) {
-      handleGenerateDID();
+      const newDID = generateDID();
+      saveDIDToStorage(newDID);
+      setAllDIDs([newDID]);
     }
-  }, [handleGenerateDID]);
+  }, []);
 
   function handleRemoveDID(did: DIDData): void {
     if (!confirm(`DID ${did.doc.id.slice(-8)} を削除しますか？`)) return;

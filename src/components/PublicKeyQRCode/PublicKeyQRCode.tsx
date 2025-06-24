@@ -11,13 +11,12 @@ import styles from './PublicKeyQRCode.module.css';
 export default function PublicKeyQRCode(): React.ReactElement {
   const [showQR, setShowQR] = useState(false);
   const [qrData, setQrData] = useState<string>('');
-  const [availableDIDs, setAvailableDIDs] = useState<DIDData[]>([]);
+  const [allDIDs, setAllDIDs] = useState<DIDData[]>([]);
   const [selectedDID, setSelectedDID] = useState<DtoId['did'] | null>(null);
   const [error, setError] = useState<string>('');
 
   useEffect(() => {
-    const allDIDs = loadAllDIDsFromStorage();
-    setAvailableDIDs(allDIDs);
+    setAllDIDs(loadAllDIDsFromStorage());
   }, []);
 
   const generatePublicKeyQR = (): void => {
@@ -28,7 +27,7 @@ export default function PublicKeyQRCode(): React.ReactElement {
       return;
     }
 
-    const didData = availableDIDs.find((did) => did.doc.id === selectedDID);
+    const didData = allDIDs.find((did) => did.doc.id === selectedDID);
     if (!didData) {
       setError('選択されたDIDが見つかりません。');
       return;
@@ -72,13 +71,13 @@ export default function PublicKeyQRCode(): React.ReactElement {
             className={styles.didSelect}
           >
             <option value="">-- DIDを選択してください --</option>
-            {availableDIDs.map((did) => (
+            {allDIDs.map((did) => (
               <option key={did.doc.id} value={did.doc.id}>
                 {formatDIDId(did.doc.id)}
               </option>
             ))}
           </select>
-          {availableDIDs.length === 0 && (
+          {allDIDs.length === 0 && (
             <p className={styles.noDIDs}>
               利用可能なDIDがありません。DID管理画面でDIDを作成してください。
             </p>

@@ -1,7 +1,7 @@
 'use client';
 
 import { Html5QrcodeScanner } from 'html5-qrcode';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import styles from './QRScanner.module.css';
 
 interface QRScannerProps {
@@ -16,7 +16,6 @@ export default function QRScanner({
   onClose,
 }: QRScannerProps): React.ReactElement {
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
-  const [isScanning, setIsScanning] = useState(false);
 
   const startScanner = useCallback(() => {
     if (scannerRef.current) return;
@@ -38,28 +37,23 @@ export default function QRScanner({
         }
       },
     );
-
-    setIsScanning(true);
   }, [onScan, onError]);
 
   useEffect(() => {
-    if (!isScanning) {
-      startScanner();
-    }
+    startScanner();
 
     return (): void => {
       if (scannerRef.current) {
         stopScanner();
       }
     };
-  }, [isScanning, startScanner]);
+  }, [startScanner]);
 
   const stopScanner = (): void => {
     if (scannerRef.current) {
       scannerRef.current.clear().catch(console.error);
       scannerRef.current = null;
     }
-    setIsScanning(false);
   };
 
   return (

@@ -22,12 +22,12 @@ export default function VCManager(): React.ReactElement {
   const [vcJsonInput, setVcJsonInput] = useState('');
   const [selectedVC, setSelectedVC] = useState<VCStorage | null>(null);
   const [error, setError] = useState<string>('');
-  const [availableDIDs, setAvailableDIDs] = useState<DIDData[]>([]);
+  const [allDIDs, setAllDIDs] = useState<DIDData[]>([]);
   const [selectedDID, setSelectedDID] = useState<DtoId['did'] | null>(null);
 
   useEffect(() => {
     const allDIDs = loadAllDIDsFromStorage();
-    setAvailableDIDs(allDIDs);
+    setAllDIDs(allDIDs);
 
     if (!selectedDID && allDIDs.length > 0) {
       setVCs([]);
@@ -78,7 +78,7 @@ export default function VCManager(): React.ReactElement {
       <h2 className={styles.title}>VC（Verifiable Credentials）管理</h2>
 
       <VCDIDSelector
-        availableDIDs={availableDIDs}
+        allDIDs={allDIDs}
         selectedDID={selectedDID}
         onDIDSelect={setSelectedDID}
         onError={setError}
