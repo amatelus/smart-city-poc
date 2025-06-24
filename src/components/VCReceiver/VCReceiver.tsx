@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import type { VCMetadata } from 'src/schemas/vc';
 import { condition } from 'src/utils/condition';
-import QRScanner from './QRScanner';
+import QRScanner from '../QRScanner/QRScanner';
 import VCErrorDisplay from './VCErrorDisplay';
 import styles from './VCReceiver.module.css';
 import { useVCScannerLogic } from './VCScannerLogic';

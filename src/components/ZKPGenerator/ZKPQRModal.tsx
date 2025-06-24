@@ -1,7 +1,7 @@
 'use client';
 
 import { QRCodeSVG } from 'qrcode.react';
-import type { ZKPProof } from 'src/utils/zkp';
+import type { ZKPProof } from 'src/schemas/zkp';
 import { formatZKPForQR } from 'src/utils/zkp';
 import styles from './ZKPGenerator.module.css';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import type { ZKPProof } from 'src/utils/zkp';
+import type { ZKPProof } from 'src/schemas/zkp';
 import styles from './ZKPGenerator.module.css';
 
 interface ZKPGeneratorResultProps {

@@ -1,11 +1,11 @@
 'use client';
 
-import DIDManager from 'src/components/DIDManager';
-import PrivateKeyProof from 'src/components/PrivateKeyProof';
-import PublicKeyQRCode from 'src/components/PublicKeyQRCode';
-import VCManager from 'src/components/VCManager';
-import VCReceiver from 'src/components/VCReceiver';
-import ZKPGenerator from 'src/components/ZKPGenerator';
+import DIDManager from 'src/components/DIDManager/DIDManager';
+import PrivateKeyProof from 'src/components/PrivateKeyProof/PrivateKeyProof';
+import PublicKeyQRCode from 'src/components/PublicKeyQRCode/PublicKeyQRCode';
+import VCManager from 'src/components/VCManager/VCManager';
+import VCReceiver from 'src/components/VCReceiver/VCReceiver';
+import ZKPGenerator from 'src/components/ZKPGenerator/ZKPGenerator';
 import styles from './page.module.css';
 
 export default function Home(): React.ReactElement {

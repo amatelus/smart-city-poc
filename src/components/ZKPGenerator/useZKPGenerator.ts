@@ -3,9 +3,9 @@
 import { useEffect, useState } from 'react';
 import type { DtoId } from 'src/schemas/brandedId';
 import type { DIDData } from 'src/schemas/did';
+import type { ZKPProof } from 'src/schemas/zkp';
 import { loadAllDIDsFromStorage } from 'src/utils/did';
 import { loadVCsFromStorage, type VCStorage } from 'src/utils/vc';
-import type { ZKPProof } from 'src/utils/zkp';
 import { generateAgeProofZKP } from 'src/utils/zkp';
 
 export const useZKPGenerator = (): {

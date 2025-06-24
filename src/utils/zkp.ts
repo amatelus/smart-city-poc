@@ -1,26 +1,6 @@
 import { sha3_256 } from 'js-sha3';
 import type { DtoId } from 'src/schemas/brandedId';
-
-export interface ZKPProof {
-  version: number;
-  proofType: 'age_over_20';
-  nonce: string;
-  proof: string;
-  publicInputs: {
-    currentDate: string;
-    minAge: number;
-    nonce: string;
-  };
-  metadata: {
-    generatedAt: string;
-    did: string;
-  };
-}
-
-export interface ZKPGenerationResult {
-  proof: ZKPProof;
-  generationTime: number;
-}
+import type { ZKPGenerationResult, ZKPProof } from 'src/schemas/zkp';
 
 const simulateComputationDelay = async (complexity: number): Promise<void> => {
   const baseDelay = 1000;
@@ -70,20 +50,20 @@ export const generateAgeProofZKP = async (
   await simulateComputationDelay(20);
 
   const proof = generateMockProof(birthDate, currentDate, nonce, did);
-
-  const zkpProof: ZKPProof = {
-    version: 1,
-    proofType: 'age_over_20',
-    nonce,
-    proof,
-    publicInputs: { currentDate, minAge: 20, nonce },
-    metadata: { generatedAt: new Date().toISOString(), did },
-  };
-
   const endTime = performance.now();
   const generationTime = endTime - startTime;
 
-  return { proof: zkpProof, generationTime };
+  return {
+    proof: {
+      version: 1,
+      proofType: 'age_over_20',
+      nonce,
+      proof,
+      publicInputs: { currentDate, minAge: 20, nonce },
+      metadata: { generatedAt: new Date().toISOString(), did },
+    },
+    generationTime,
+  };
 };
 
 export const formatZKPForQR = (zkpProof: ZKPProof): string => {

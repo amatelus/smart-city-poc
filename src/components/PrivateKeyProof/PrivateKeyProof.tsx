@@ -7,8 +7,8 @@ import type { DIDData } from 'src/schemas/did';
 import { condition } from 'src/utils/condition';
 import { loadAllDIDsFromStorage, signMessage } from 'src/utils/did';
 import { formatDIDId } from 'src/utils/formatDIDId';
+import QRScanner from '../QRScanner/QRScanner';
 import styles from './PrivateKeyProof.module.css';
-import QRScanner from './QRScanner';
 
 export default function PrivateKeyProof(): React.ReactElement {
   const [step, setStep] = useState<'initial' | 'scanning' | 'nonce-received' | 'signature-ready'>(
